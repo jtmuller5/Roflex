@@ -76,7 +76,6 @@ Serial.print("X: ");
 Serial.print(xa);
 Serial.print("Xb: ");
 Serial.print(y);
-Serial.print("Finished");
 Serial.println("");
 }
 //Set mode based on BT input
