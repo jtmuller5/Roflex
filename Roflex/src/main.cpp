@@ -74,7 +74,7 @@ if(collectPos == true){
 /* Display the floating point data */
 Serial.print("X: ");
 Serial.print(xa);
-Serial.print("Xb: ");
+Serial.print("Yb: ");
 Serial.print(y);
 Serial.println("");
 }
