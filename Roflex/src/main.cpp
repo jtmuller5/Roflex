@@ -2,7 +2,6 @@
 #include "RoflexPins.h"
 #include "RoflexMotion.h"
 #include <Adafruit_MQTT.h>
-#include <UtilityFunctions.h>
 
 void setup(void)
 {
@@ -61,7 +60,7 @@ if(collectPos == true){
   bno.getEvent(&event);
   imu::Vector<3> gravity = bno.getVector(Adafruit_BNO055::VECTOR_GRAVITY);
 
-  x = event.orientation.x; //Gives angle from north
+  x = event.orientation.x; //Gives angle from north (I think this is actually a relative direction value)
   y = event.orientation.y; //Gives angle from horizontal, +90 up, -90 down
   z = event.orientation.z; //Gives angle of rotation along device, +180 CCW, -180 CW
 
@@ -72,28 +71,44 @@ if(collectPos == true){
   xa = (vx/9.81)*90; //Angle of elevation along the x-axis, derived from gravity vector
 
 /* Display the floating point data */
-Serial.print("X: ");
-Serial.print(xa);
-Serial.print("Yb: ");
-Serial.print(y);
+Serial.print("Front: ");
+Serial.print(mode);
 Serial.println("");
 }
 //Set mode based on BT input
-if(menu1 == 'q'){
+if(menu1 == 'q'){ //q = quick functions
   if(menu2 == 'u'){
     mode = 1;
+    lastmode = 1;
   }
   else if(menu2 == 'a'){
     mode = 2;
+    lastmode = 2;
   }
   else if(menu2 == 'c'){
     mode = 3;
+    lastmode = 3;
   }
   else if(menu2 == 'f'){
     mode = 4;
+    lastmode = 4;
   }
   else if(menu2 == 't'){
     mode = 5;
+    lastmode = 5;
+  }
+  else if(menu2 == 'o'){
+    mode = 6;
+    lastmode = 6;
+  }
+}
+
+//All settings functions should exit by setting the mode to the lastMode variables
+//Otherwise, you get stuck in the settings function
+else if(menu1 == 's'){ //s = settings
+  if(menu2 == 'c'){
+    frontSaved = false;
+    mode = 7;
   }
 }
 
@@ -113,10 +128,18 @@ if(menu1 == 'q'){
       case 5:
         timer();
         break;
+      case 6:
+        checkFront(x);
+        break;
+      case 7:
+        saveFront();
+        break;
       default:
         break;
       }
 
-
+ //Reset inputs so we don't get stuck
+  menu1 = "";
+  menu2 = "";
   command = "";
 }

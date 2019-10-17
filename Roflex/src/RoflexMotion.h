@@ -1,4 +1,5 @@
 #include <RoflexLibs.h>
+#include <RoflexAnimations.h>
 void WhatsUp(float z){
   /* Get a new sensor event */
   strip.clear();
@@ -110,4 +111,82 @@ void displayCalStatus(void)
   Serial.print(accel, DEC);
   Serial.print(" M:");
   Serial.println(mag, DEC);
+}
+
+void saveFront(void){
+  if (frontSaved == false) {
+    float total = 0;
+    int headerVals [400]; //Create integer array to hold temporary sensor values for direction, a larger array should make the user remain stable for longer
+
+    //Each time the device resets and needs to calibrate, turn the neopixels 'off'
+    for (uint16_t i = 0; i < 3; i++) {
+      strip.setPixelColor(i, 0, 0, 0);
+      strip.show();
+    }
+
+    //The device will fill the headerVals and angleVals arrays with sensor derived numbers
+    for (int i = 0; i <= 399; i++) {
+      sensors_event_t event;
+      bno.getEvent(&event);
+      float x = event.orientation.x; //Gives angle from north
+
+      headerVals[i] = x;
+      total += headerVals[i];  //Each value that is added to the arrays is added to the total variables
+    }
+
+    //The total is then divided by the total number of values in the array to find the average
+    //This value can then be used as a reference for the remainder of the exercise
+    front = total / 400;
+
+    //To find the standard deviation of the array values, the diffrence between each value and the average will be calculated and summed
+    float sqDevSum = 0.0;
+
+    for (int i = 0; i <= 399; i++) {
+      sqDevSum += pow((front - float(headerVals[i])), 2);
+    }
+
+    //The sum will then be divided by the total number of values in the array
+    float stDev = sqrt(sqDevSum / 100);
+
+    //If the standard deviation is below a given threshold (.5 in this case), the calibration value will become true
+    if ((stDev < .5) & (frontSaved == false)) {
+      frontSaved = true;
+      spinLights(127, 0, 100);
+      mode = lastmode;
+    }
+    //If not, calibration remains false and the device will repeat this process
+    else if (stDev > .5) {
+      frontSaved = false;
+    }
+  }
+}
+
+void checkFront(float x){
+  boolean rotateCW; //Variable to set rotation direction
+  if (front == -1){
+    saveFront();
+  }
+  else {
+    // Adjust for 360 to 0 jump for compass values
+    if(front+180>360){
+      float overlap = 180 - (360 - front);
+      if((x>=front)|(x<overlap)){ //If we are to the right of the front direction...
+        rotateCW = false;
+      }
+      else {
+        rotateCW = true;
+      }
+    }
+
+    else {
+      float overlap = 360 - (180-front);
+      if((x<=front)|(x>overlap)){ //If we are to the left of the front direction...
+        rotateCW = true;
+      }
+      else {
+        rotateCW = false;
+      }
+    }
+    rotate(rotateCW,127,127,100);
+  }
 }

@@ -66,22 +66,29 @@ int formFunction = 1; //Variable to hold the current form activity
 //---------------------------------------------------------
 //GLOBAL VARIABLES
 //---------------------------------------------------------
-String command;
+//Mode selection variables
+String command; //Command that is assembled from individual bytes
 int mode = 1;
-boolean collectPos = true; //Toggle to turn orientation collection on and off
+int lastmode = 1; //Value to hold the previous mode. Will be used to exit setting functions
 char menu1;
 char menu2;
+
+boolean collectPos = true; //Toggle to turn orientation collection on and off
+
+//Reference variables for correct movement
+float front = -1; //Holds the front facing direction of the user (calculated in saveFront function)
+unsigned long startTime;
+boolean frontSaved = false;
 
 // Orientation values
 float x;
 float y;
 float z;
-// Vector values
+// Gravity vector values
 float vx;
 float vy;
 float vz;
-
-float xa;
+float xa; //Pitch angle determined from gravity vector
 
 //---------------------------------------------------------
 //NEOPIXEL VALUES
