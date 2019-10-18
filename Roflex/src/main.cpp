@@ -42,7 +42,7 @@ void loop(void)
    Serial.println(menu1);
    Serial.println(menu2);
  }
- //test
+ //JTM test
 
   // if(command.length() > 0){
   //   if(command == "5" & collectPos == true) collectPos = false;
