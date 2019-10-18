@@ -31,6 +31,7 @@ void WhatsUp(float z){
 
   strip.show();
   // test2
+  //test 3
 }
 
 void freestyle(String command){
