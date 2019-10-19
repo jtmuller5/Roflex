@@ -1,5 +1,18 @@
 #include <RoflexLibs.h>
 #include <RoflexAnimations.h>
+
+/*
+Title:
+Definition:
+Parameters:
+*/
+
+/*
+Title: WhatsUp
+Definition: This function takes the z value from the orientation sensor and determines which of the 8 LEDs
+            is facing upward. It will then light up that LED and turn all others off
+Parameters: z - Z value from orientation sensor that determines rotation about a central axis
+*/
 void WhatsUp(float z){
   /* Get a new sensor event */
   strip.clear();
@@ -30,9 +43,13 @@ void WhatsUp(float z){
   }
 
   strip.show();
-  // test2
-  //test 3
 }
+
+/*
+Title: freestyle
+Definition: Changes the color of the LEDs based on a character sent by the user over bluetooth
+Parameters: Command - A single character that determines what color to change the LEDs to
+*/
 
 void freestyle(String command){
   Serial.println(command);
@@ -51,22 +68,24 @@ void freestyle(String command){
   strip.show();
 }
 
-void timer(){
-  Serial.println(command);
-  if(command == "r"){
-    strip.fill(red);
-  }
-  else if(command == "y"){
-    strip.fill(yellow);
-  }
-  else if(command == "b"){
-    strip.fill(blue);
-  }
-  else if(command == "g"){
-    strip.fill(green);
-  }
-  strip.show();
+/*
+Title: timer
+Definition: (Not Finished) Light up the LEDs when a certain interval has passed, turn off the LEDs after another interval has passed
+            Start with the LEDs off
+Parameters: on - The number of seconds that the LEDs should be turned on for
+            off - The number of seconds the LEDs should be turned off for
+*/
+
+void timer(int on,int off){
+
 }
+
+/*
+Title: AngleFinder
+Definition: Function that changes the color of the LEDs based on the angle of elevation.
+            At 0 degrees, the LEDs should be green. As you move away from being perfectly horizontal, the LEDs will gradually change to red
+Parameters: y - Angle from horizontal. +90 is straight up, -90 is straight down
+*/
 
 void AngleFinder(float y){
   float redVal;
@@ -87,6 +106,12 @@ void AngleFinder(float y){
   strip.fill(grade);
   strip.show();
 }
+
+/*
+Title: displayCalStatus
+Definition: Displays the calibration status of the device
+Parameters: none
+*/
 
 void displayCalStatus(void)
 {
@@ -114,6 +139,16 @@ void displayCalStatus(void)
   Serial.print(" M:");
   Serial.println(mag, DEC);
 }
+
+/*
+Title: saveFront
+Definition: This function is used to save a front-facing direction. It works by continuously saving 400 direction values into an array
+            and then calculating the standard deviation of those values. If the standard deviation is small, we assume the user
+            is steady and this angle is saved to the global "front" variable.
+
+            This angle is then used to determine if the user's form is correct
+Parameters: none (might want to add variables for the number of values collected and the standard deviation that determines steadiness)
+*/
 
 void saveFront(void){
   if (frontSaved == false) {
@@ -162,6 +197,13 @@ void saveFront(void){
     }
   }
 }
+
+/*
+Title: checkFront
+Definition: If a front value has been saved, this function will direct the user to that front direction
+            using the LEDs. Special handling is added to account for the 360 - 0 transition that happens to compass values
+Parameters: x - X orientation value from sensor (compass direction)
+*/
 
 void checkFront(float x){
   boolean rotateCW; //Variable to set rotation direction
