@@ -13,6 +13,7 @@ Definition: This function takes the z value from the orientation sensor and dete
             is facing upward. It will then light up that LED and turn all others off
 Parameters: z - Z value from orientation sensor that determines rotation about a central axis
 */
+
 void WhatsUp(float z){
   /* Get a new sensor event */
   strip.clear();
